@@ -47,6 +47,17 @@ router.get('/test', function (req, res, next) {
     console.log('finshed2');
 });
 
+router.get('/blockchaininfo', function (req, res, next) {
+    coreApi.getBlockchainInfo().then(getblockchaininfo => {
+        res.send(getblockchaininfo);
+    })
+    .catch(err => {
+        res.locals.userMessage = "Error: " + err;
+        res.send(res.locals.userMessage);
+    });
+});
+
+
 router.get("/blocks", function(req, res, next) {
 	var limit = 20;
 	var offset = 0;
