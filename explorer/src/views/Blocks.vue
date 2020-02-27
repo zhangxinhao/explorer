@@ -1,12 +1,27 @@
 <template>
-  <div class="overflow-auto">
+  <div class="blocks">
     <b-container>
-      <b-table striped hover :items="items"></b-table>
-      <b-pagination-nav
-      v-model="currentPage"
-      :link-gen="linkGen"
-      :number-of-pages="totalPage"
-      use-router></b-pagination-nav>
+      <square v-if="isLoading" v-bind:loading="isLoading"></square>
+      <b-card v-else class="mb-4 shadow-sm">
+        <b-table
+        striped
+        hover
+        :items="items"
+        caption-top>
+          <template v-slot:table-caption>
+            <b-container class="bv-example-row">
+              <h4>Blocks</h4>
+            </b-container>
+          </template>
+        </b-table>
+        <b-pagination-nav
+        v-model="currentPage"
+        :link-gen="linkGen"
+        :number-of-pages="totalPage"
+        use-router
+        >
+        </b-pagination-nav>
+      </b-card>
     </b-container>
   </div>
 </template>
@@ -14,6 +29,7 @@
 <script>
 import * as utils from '../store/utils'
 export default {
+  name: 'Blocks',
   props: ['page'],
   data: function () {
     return {
@@ -22,7 +38,8 @@ export default {
       info: '',
       currentPage: 1,
       limit: 15,
-      totalPage: 15
+      totalPage: 15,
+      isLoading: true
     }
   },
   created () {
@@ -74,11 +91,12 @@ export default {
               Size: temp.size
             })
           }
-          return this.info
+          this.isLoading = false
         })
         .catch(error => {
           console.log(error)
           this.errored = true
+          this.isLoading = false
         })
     },
     time: function (time) {

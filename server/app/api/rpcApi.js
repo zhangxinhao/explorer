@@ -65,6 +65,22 @@ function getBlockchainInfo() {
 	return getRpcData("getblockchaininfo");
 }
 
+function getRawTransaction(txid) {
+	return new Promise((resolve, reject) => {
+        getRpcDataWithParams({method:"getrawtransaction", parameters:[txid, 1]})
+        .then(result => {
+            if (result == null || result.code && result.code < 0) {
+                reject(result);
+
+                return;
+            }
+            resolve(result);
+        })
+        .catch(function(err) {
+            reject(err);
+        });
+	});
+}
 
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
@@ -73,7 +89,7 @@ module.exports = {
 	// getMempoolInfo: getMempoolInfo,
 	// getMempoolTxids: getMempoolTxids,
 	// getMiningInfo: getMiningInfo,
-	// getRawTransaction: getRawTransaction,
+	getRawTransaction: getRawTransaction,
 	// getUtxo: getUtxo,
 	// getMempoolTxDetails: getMempoolTxDetails,
 	// getRawMempool: getRawMempool,

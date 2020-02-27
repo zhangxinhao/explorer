@@ -1,17 +1,20 @@
 <template>
   <div class="home">
-    <Blocks msg="ssss"/>
+    <b-container>
+      <BlockList></BlockList>
+    </b-container>
   </div>
+
 </template>
 
 <script>
 // @ is an alias to /src
-import Blocks from '@/components/Blocks'
+import BlockList from '../components/BlockList'
 
 export default {
   name: 'Home',
   components: {
-    Blocks
+    BlockList
   }
 }
 </script>

@@ -116,4 +116,36 @@ router.get("/blocks", function(req, res, next) {
 	});
 });
 
+router.get("/block-height", function(req, res, next) {
+    var blockHeight = parseInt(req.query.blockHeight);
+    var limit = 10;
+    var offset = 0;
+    res.locals.result = {};
+
+    if (req.query.offset) {
+		offset = parseInt(req.query.offset);
+    }
+
+    coreApi.getBlockByHeight(blockHeight).then(result => {
+		res.locals.result.getblockbyheight = result;
+        // res.send(result[0].hash);
+		coreApi.getBlockByHashWithTransactions(result[0].hash, limit, offset).then(result => {
+			res.locals.result.getblock = result.getblock;
+			res.locals.result.transactions = result.transactions;
+			res.locals.result.txInputsByTransaction = result.txInputsByTransaction;
+            res.send(result);
+
+			next();
+        })
+        .catch(err => {
+            res.locals.userMessage = "Error: " + err;
+            res.send(res.locals.userMessage);
+        });
+    })
+    .catch(err => {
+		res.locals.userMessage = "Error: " + err;
+        res.send(res.locals.userMessage);
+	});
+});
+
 module.exports = router;

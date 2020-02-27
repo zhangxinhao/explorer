@@ -7,12 +7,14 @@ import axios from 'axios'
 import VueAxios from 'vue-axios'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
+import VueSpinners from 'vue-spinners'
 
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueAxios, axios)
+Vue.use(VueSpinners)
 
 new Vue({
   router,
