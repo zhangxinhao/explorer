@@ -9,12 +9,16 @@ import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 import VueSpinners from 'vue-spinners'
 
+import * as utils from './store/utils'
+
 Vue.config.productionTip = false
 
 Vue.use(BootstrapVue)
 Vue.use(IconsPlugin)
 Vue.use(VueAxios, axios)
 Vue.use(VueSpinners)
+
+Vue.prototype.UTILS = utils
 
 new Vue({
   router,

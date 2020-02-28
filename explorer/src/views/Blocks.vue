@@ -27,7 +27,6 @@
 </template>
 
 <script>
-import * as utils from '../store/utils'
 export default {
   name: 'Blocks',
   props: ['page'],
@@ -45,7 +44,7 @@ export default {
   created () {
     this.fetchData()
     this.axios
-      .get(utils.getURL() + 'api/blockchaininfo')
+      .get(this.UTILS.getURL() + 'api/blockchaininfo')
       .then(response => {
         this.totalPage = Math.ceil(response.data.blocks / this.limit)
       })
@@ -60,7 +59,7 @@ export default {
   methods: {
     linkGen (pageNum) {
       return {
-        path: '/about',
+        path: '/blocks',
         query: {
           page: pageNum,
           limit: this.limit,
@@ -71,7 +70,7 @@ export default {
     fetchData () {
       this.axios({
         method: 'get',
-        url: utils.getURL() + 'api/blocks',
+        url: this.UTILS.getURL() + 'api/blocks',
         params: {
           limit: this.limit,
           offset: (this.page - 1) * this.limit

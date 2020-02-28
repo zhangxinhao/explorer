@@ -16,7 +16,7 @@
                     <h4>Latest Blocks</h4>
                   </b-col>
                   <b-col>
-                    <b-link to="/about?page=1" class="text-right">
+                    <b-link to="/blocks?page=1" class="text-right">
                       <h4>Browse Blocks</h4>
                     </b-link>
                   </b-col>
@@ -24,7 +24,7 @@
               </b-container>
             </template>
             <template v-slot:cell(Height)="data">
-              <b-link href="blocks?page=1">{{data.item.Height}}</b-link>
+              <b-link :href="'/blockheight/' + data.item.Height">{{data.item.Height}}</b-link>
             </template>
           </b-table>
         </b-card-body>
@@ -34,7 +34,6 @@
 </template>
 
 <script>
-import * as utils from '../store/utils'
 export default {
   name: 'BlockList',
   props: {
@@ -52,7 +51,7 @@ export default {
     blocks: function () {
       this.axios({
         method: 'get',
-        url: utils.getURL() + 'api/blocks',
+        url: this.UTILS.getURL() + 'api/blocks',
         params: {
           limit: this.limit
         }

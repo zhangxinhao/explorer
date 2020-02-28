@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Blocks from '../views/Blocks'
+import BlockHeight from '../views/BlockHeight'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     props: (route) => ({
       page: route.query.page
     })
+  },
+  {
+    path: '/blockheight/:id',
+    name: 'BlockHeight',
+    component: BlockHeight
   }
 ]
 
