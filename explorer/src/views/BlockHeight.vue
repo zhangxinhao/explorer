@@ -127,10 +127,10 @@
                 </b-col>
               </b-row>
           </b-list-group-item>
-
         </b-list-group>
       </b-card-body>
     </b-card>
+    {{items}}
   </div>
 </template>
 
@@ -158,7 +158,7 @@ export default {
       })
         .then(response => {
           this.info = response.data.getblock
-          this.items = response
+          this.items = response.data.transactions[0][0].txid
         })
         .catch(error => {
           console.log(error)

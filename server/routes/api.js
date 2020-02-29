@@ -128,7 +128,6 @@ router.get("/block-height", function(req, res, next) {
 
     coreApi.getBlockByHeight(blockHeight).then(result => {
 		res.locals.result.getblockbyheight = result;
-        // res.send(result[0].hash);
 		coreApi.getBlockByHashWithTransactions(result[0].hash, limit, offset).then(result => {
 			res.locals.result.getblock = result.getblock;
 			res.locals.result.transactions = result.transactions;
@@ -145,6 +144,95 @@ router.get("/block-height", function(req, res, next) {
     .catch(err => {
 		res.locals.userMessage = "Error: " + err;
         res.send(res.locals.userMessage);
+	});
+});
+
+router.get("/tx", function(req, res, next) {
+	var txid = req.query.txid;
+
+	// var output = -1;
+	// if (req.query.output) {
+	// 	output = parseInt(req.query.output);
+	// }
+
+	res.locals.txid = txid;
+	// res.locals.output = output;
+
+    res.locals.result = {};
+
+    coreApi.getRawTransaction(txid)
+    .then(rawTxResult => {
+        rawTxResult = rawTxResult[0];
+        res.locals.result.getrawtransaction = rawTxResult;
+		var promises = [];
+
+		promises.push(new Promise((resolve, reject) => {
+            coreApi.getTxUtxos(rawTxResult)
+            .then(utxos => {
+				res.locals.utxos = utxos;
+
+				resolve();
+
+            })
+            .catch(err => {
+				reject(err);
+			});
+		}));
+
+		// if (rawTxResult.confirmations == null) {
+		// 	promises.push(new Promise((resolve, reject) => {
+		// 		coreApi.getMempoolTxDetails(txid).then(mempoolDetails => {
+		// 			res.locals.mempoolDetails = mempoolDetails;
+
+		// 			resolve();
+
+		// 		}).catch(err => {
+        //             res.locals.userMessage = "Error: " + err;
+        //             res.send(res.locals.userMessage);
+		// 			reject(err);
+		// 		});
+		// 	}));
+		// }
+
+		promises.push(new Promise((resolve, reject) => {
+            coreApi.getBlockByHash([rawTxResult.blockhash])
+            .then(block => {
+                res.locals.result.getblock = block;
+
+                var txids = [];
+				for (var i = 0; i < rawTxResult.vin.length; i++) {
+					if (!rawTxResult.vin[i].coinbase) {
+						txids.push(rawTxResult.vin[i].txid);
+					}
+				}
+
+				coreApi.getRawTransactions(txids).then(txInputs => {
+                    res.locals.result.txInputs = txInputs;
+					resolve();
+				});
+            })
+            .catch(err => {
+                res.locals.userMessage = "Error: " + err;
+                res.send(res.locals.userMessage);
+                next();
+            });
+		}));
+
+		Promise.all(promises).then(function() {
+            res.send(res.locals.result)
+			next();
+
+		}).catch(err => {
+            res.locals.userMessage = "Error: " + err;
+            res.send(res.locals.userMessage);
+			next();
+		});
+
+
+	}).catch(err => {
+		res.locals.userMessage = "Error: " + err;
+        res.send(res.locals.userMessage);
+		next();
 	});
 });
 

@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
 import Blocks from '../views/Blocks'
 import BlockHeight from '../views/BlockHeight'
+import Transaction from '../views/Transaction'
 
 Vue.use(VueRouter)
 
@@ -27,6 +28,11 @@ const routes = [
     path: '/blockheight/:id',
     name: 'BlockHeight',
     component: BlockHeight
+  },
+  {
+    path: '/tx/:id',
+    name: 'Transaction',
+    component: Transaction
   }
 ]
 

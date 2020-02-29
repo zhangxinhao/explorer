@@ -82,6 +82,32 @@ function getRawTransaction(txid) {
 	});
 }
 
+function getUtxo(txid, outputIndex) {
+	return new Promise((resolve, reject) => {
+        getRpcDataWithParams({method:"gettxout", parameters:[txid, outputIndex]})
+        .then(result => {
+            result = result[0]
+			if (result == null) {
+				resolve("0");
+
+				return;
+			}
+
+			if (result.code && result.code < 0) {
+				reject(result);
+
+				return;
+			}
+
+			resolve(result);
+
+        })
+        .catch(err => {
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
 	// getNetworkInfo: getNetworkInfo,
@@ -90,7 +116,7 @@ module.exports = {
 	// getMempoolTxids: getMempoolTxids,
 	// getMiningInfo: getMiningInfo,
 	getRawTransaction: getRawTransaction,
-	// getUtxo: getUtxo,
+	getUtxo: getUtxo,
 	// getMempoolTxDetails: getMempoolTxDetails,
 	// getRawMempool: getRawMempool,
 	// getUptimeSeconds: getUptimeSeconds,

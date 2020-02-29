@@ -127,6 +127,27 @@ function getRawTransaction(txid) {
 	return rpcApi.getRawTransaction(txid);
 }
 
+function getTxUtxos(tx) {
+	return new Promise((resolve, reject) => {
+		var promises = [];
+
+		for (var i = 0; i < tx.vout.length; i++) {
+			promises.push(getUtxo(tx.txid, i));
+		}
+
+		Promise.all(promises).then(results => {
+			resolve(results);
+
+		}).catch(err => {
+			reject(err);
+		});
+	});
+}
+
+function getUtxo(txid, outputIndex) {
+	return rpcApi.getUtxo(txid, outputIndex);
+}
+
 module.exports = {
     getBlockByHeight: getBlockByHeight,
     getBlocksByHeight: getBlocksByHeight,
@@ -134,5 +155,6 @@ module.exports = {
     getBlockByHash: getBlockByHash,
     getRawTransactions: getRawTransactions,
     getRawTransaction: getRawTransaction,
-    getBlockByHashWithTransactions: getBlockByHashWithTransactions
+    getBlockByHashWithTransactions: getBlockByHashWithTransactions,
+    getTxUtxos: getTxUtxos
 }
