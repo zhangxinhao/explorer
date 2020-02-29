@@ -64,7 +64,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				var maxInputsTracked = 15;
 				var vinTxids = [];
 				for (var i = 0; i < transactions.length; i++) {
-					var transaction = transactions[i];
+                    var transaction = transactions[i][0];
 
 					if (transaction && transaction.vin) {
 						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
@@ -80,10 +80,11 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					var vinTxById = {};
 
 					vinTransactions.forEach(tx => {
-						vinTxById[tx.txid] = tx;
+                        vinTxById[tx[0].txid] = tx[0];
 					});
 
 					transactions.forEach(tx => {
+                        tx = tx[0]
 						txInputsByTransaction[tx.txid] = {};
 
 						if (tx && tx.vin) {
@@ -93,9 +94,8 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 								}
 							}
 						}
-
-						resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction });
-					});
+                    });
+                    resolve({ getblock:block, transactions:transactions, txInputsByTransaction:txInputsByTransaction});
 				});
 			});
 

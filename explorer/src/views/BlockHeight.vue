@@ -130,7 +130,65 @@
         </b-list-group>
       </b-card-body>
     </b-card>
-    {{items}}
+    <br>
+
+    <b-card
+    header-tag="header">
+      <template v-slot:header>
+        <h6 class="mb-0 text-left">Transactions</h6>
+      </template>
+      <b-card-body>
+        <div v-for="(item, index) in items" v-bind:key="item.txid">
+          <b-card header-tag="header">
+            <template v-slot:header>
+              <span>#{{index}} - </span>
+              <b-link :href="'/tx/' + item[0].txid">{{item[0].txid}}</b-link>
+            </template>
+            <b-card-body>
+              <b-row>
+
+                <b-col>
+                  <b-button v-if="item[0].vin[0].coinbase">coinbase</b-button>
+                  <b-card v-else>
+                    <b-list-group flush>
+                      <div
+                      v-for="(txInput, txVinIndex) in txInputsByTransaction[item[0].txid]"
+                      v-bind:key="txVinIndex">
+                        <b-list-group-item href="#">
+                          <a class="mb-0 text-left" href="#">{{txInput.vout[item[0].vin[txVinIndex].vout].scriptPubKey.addresses[0]}}</a>
+                          <div>{{txInput.vout[item[0].vin[txVinIndex].vout].value}}</div>
+                        </b-list-group-item>
+                      </div>
+                    </b-list-group>
+                  </b-card>
+                </b-col>
+                <br>
+
+                <b-col>
+                  <b-card>
+                    <b-list-group flush>
+                      <div
+                      v-for="(txOutput, txVoutIndex) in item[0].vout"
+                      v-bind:key="txVoutIndex">
+                        <b-list-group-item href="#">
+                          <a class="mb-0 text-left" href="#" v-if="txOutput.scriptPubKey.type != 'nulldata'">{{txOutput.scriptPubKey.addresses[0]}}</a>
+                          <b-button v-else>OP_RETURN</b-button>
+                          <div>{{txOutput.value}}</div>
+                        </b-list-group-item>
+                      </div>
+                    </b-list-group>
+                  </b-card>
+                </b-col>
+
+              </b-row>
+            </b-card-body>
+          </b-card>
+
+          <br>
+
+        </div>
+      </b-card-body>
+    </b-card>
   </div>
 </template>
 
@@ -141,7 +199,8 @@ export default {
     return {
       // page: 0
       info: '',
-      items: ''
+      items: '',
+      txInputsByTransaction: ''
     }
   },
   created () {
@@ -158,7 +217,8 @@ export default {
       })
         .then(response => {
           this.info = response.data.getblock
-          this.items = response.data.transactions[0][0].txid
+          this.items = response.data.transactions
+          this.txInputsByTransaction = response.data.txInputsByTransaction
         })
         .catch(error => {
           console.log(error)

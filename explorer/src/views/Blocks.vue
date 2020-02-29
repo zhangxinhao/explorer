@@ -13,6 +13,9 @@
               <h4>Blocks</h4>
             </b-container>
           </template>
+          <template v-slot:cell(Height)="data">
+              <b-link :href="'/blockheight/' + data.item.Height">{{data.item.Height}}</b-link>
+            </template>
         </b-table>
         <b-pagination-nav
         v-model="currentPage"

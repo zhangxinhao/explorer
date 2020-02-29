@@ -118,7 +118,7 @@ router.get("/blocks", function(req, res, next) {
 
 router.get("/block-height", function(req, res, next) {
     var blockHeight = parseInt(req.query.blockHeight);
-    var limit = 10;
+    var limit = 5;
     var offset = 0;
     res.locals.result = {};
 
