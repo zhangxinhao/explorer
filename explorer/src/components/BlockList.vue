@@ -61,7 +61,7 @@ export default {
           this.info = list
           var length = list.length
           for (let index = 0; index < length; index++) {
-            var temp = list[index][0]
+            var temp = list[index]
             this.items.push({
               Height: temp.height,
               Timestamp: this.time(temp.time * 1000),

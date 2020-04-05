@@ -18,7 +18,7 @@ function getRpcDataWithParams(request) {
         var client = global.rpcClient;
         client.command([request])
         .then(result => {
-            resolve(result);
+            resolve(result[0]);
         })
         .catch(err => {
             console.log(err);
@@ -50,7 +50,7 @@ function getBlockByHeight(blockHeight) {
 
 function getBlockByHash(blockHash) {
 	return new Promise((resolve, reject) => {
-        getRpcDataWithParams({method:"getblock", parameters:blockHash})
+        getRpcDataWithParams({method:"getblock", parameters:[blockHash]})
         .then(block => {
             resolve(block);
         })
@@ -86,7 +86,6 @@ function getUtxo(txid, outputIndex) {
 	return new Promise((resolve, reject) => {
         getRpcDataWithParams({method:"gettxout", parameters:[txid, outputIndex]})
         .then(result => {
-            result = result[0]
 			if (result == null) {
 				resolve("0");
 
@@ -108,23 +107,15 @@ function getUtxo(txid, outputIndex) {
 	});
 }
 
+function getAddress(address) {
+	return getRpcDataWithParams({method:"validateaddress", parameters:[address]});
+}
+
 module.exports = {
 	getBlockchainInfo: getBlockchainInfo,
-	// getNetworkInfo: getNetworkInfo,
-	// getNetTotals: getNetTotals,
-	// getMempoolInfo: getMempoolInfo,
-	// getMempoolTxids: getMempoolTxids,
-	// getMiningInfo: getMiningInfo,
 	getRawTransaction: getRawTransaction,
 	getUtxo: getUtxo,
-	// getMempoolTxDetails: getMempoolTxDetails,
-	// getRawMempool: getRawMempool,
-	// getUptimeSeconds: getUptimeSeconds,
-	// getHelp: getHelp,
-	// getRpcMethodHelp: getRpcMethodHelp,
-	// getAddress: getAddress,
-	// getPeerInfo: getPeerInfo,
-    // getChainTxStats: getChainTxStats,
     getBlockByHeight: getBlockByHeight,
-	getBlockByHash: getBlockByHash
+    getBlockByHash: getBlockByHash,
+    getAddress: getAddress
 };

@@ -4,6 +4,7 @@ import Home from '../views/Home.vue'
 import Blocks from '../views/Blocks'
 import BlockHeight from '../views/BlockHeight'
 import Transaction from '../views/Transaction'
+import Address from '../views/Address'
 
 Vue.use(VueRouter)
 
@@ -33,6 +34,11 @@ const routes = [
     path: '/tx/:id',
     name: 'Transaction',
     component: Transaction
+  },
+  {
+    path: '/address/:id',
+    name: 'Address',
+    component: Address
   }
 ]
 

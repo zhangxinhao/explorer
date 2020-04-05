@@ -37,8 +37,7 @@ function getBlockByHash(blockHash) {
 
 function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
     return new Promise((resolve, reject) => {
-        getBlockByHash([blockHash]).then(block => {
-            block = block[0];
+        getBlockByHash(blockHash).then(block => {
             var txids = [];
 
 			if (txOffset > 0) {
@@ -64,7 +63,7 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 				var maxInputsTracked = 15;
 				var vinTxids = [];
 				for (var i = 0; i < transactions.length; i++) {
-                    var transaction = transactions[i][0];
+                    var transaction = transactions[i];
 
 					if (transaction && transaction.vin) {
 						for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
@@ -80,11 +79,10 @@ function getBlockByHashWithTransactions(blockHash, txLimit, txOffset) {
 					var vinTxById = {};
 
 					vinTransactions.forEach(tx => {
-                        vinTxById[tx[0].txid] = tx[0];
+                        vinTxById[tx.txid] = tx;
 					});
 
 					transactions.forEach(tx => {
-                        tx = tx[0]
 						txInputsByTransaction[tx.txid] = {};
 
 						if (tx && tx.vin) {
@@ -148,6 +146,74 @@ function getUtxo(txid, outputIndex) {
 	return rpcApi.getUtxo(txid, outputIndex);
 }
 
+function getAddress(address) {
+	return rpcApi.getAddress(address);
+}
+
+function getRawTransactionsWithInputs(txids) {
+	return new Promise(function(resolve, reject) {
+		getRawTransactions(txids).then(transactions => {
+			var maxInputsTracked = 10;
+			var vinTxids = [];
+			for (var i = 0; i < transactions.length; i++) {
+				var transaction = transactions[i];
+				if (transaction && transaction.vin) {
+					for (var j = 0; j < Math.min(maxInputsTracked, transaction.vin.length); j++) {
+						if (transaction.vin[j].txid) {
+							vinTxids.push(transaction.vin[j].txid);
+						}
+					}
+				}
+			}
+            console.log('vinTxids', vinTxids.length)
+			var txInputsByTransaction = {};
+			getRawTransactions(vinTxids).then(vinTransactions => {
+				var vinTxById = {};
+
+				vinTransactions.forEach(tx => {
+					vinTxById[tx.txid] = tx;
+				});
+
+				transactions.forEach(tx => {
+					txInputsByTransaction[tx.txid] = {};
+
+					if (tx && tx.vin) {
+						for (var i = 0; i < Math.min(maxInputsTracked, tx.vin.length); i++) {
+							if (vinTxById[tx.vin[i].txid]) {
+								txInputsByTransaction[tx.txid][i] = vinTxById[tx.vin[i].txid];
+							}
+						}
+					}
+				});
+
+				resolve({ transactions:transactions, txInputsByTransaction:txInputsByTransaction });
+			});
+		});
+	});
+}
+
+function getBlocksByHash(blockHashes) {
+	return new Promise(function(resolve, reject) {
+		var promises = [];
+		for (var i = 0; i < blockHashes.length; i++) {
+			promises.push(getBlockByHash(blockHashes[i]));
+		}
+
+		Promise.all(promises).then(results => {
+			var result = {};
+
+			results.forEach(item => {
+				result[item.hash] = item;
+			});
+
+			resolve(result);
+
+		}).catch(err => {
+			reject(err);
+		});
+	});
+}
+
 module.exports = {
     getBlockByHeight: getBlockByHeight,
     getBlocksByHeight: getBlocksByHeight,
@@ -156,5 +222,8 @@ module.exports = {
     getRawTransactions: getRawTransactions,
     getRawTransaction: getRawTransaction,
     getBlockByHashWithTransactions: getBlockByHashWithTransactions,
-    getTxUtxos: getTxUtxos
+    getTxUtxos: getTxUtxos,
+    getAddress: getAddress,
+    getRawTransactionsWithInputs: getRawTransactionsWithInputs,
+    getBlocksByHash: getBlocksByHash
 }

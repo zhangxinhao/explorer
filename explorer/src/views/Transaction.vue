@@ -74,13 +74,22 @@
             </template>
             <b-card-body>
               <b-list-group flush>
-                <b-list-group-item href="#">
+                <b-list-group-item
+                :href="'/address/' + txInputs[index].vout[txVin.vout].scriptPubKey.addresses[0]"
+                v-if="txInputs[index].vout[txVin.vout].scriptPubKey.addresses !== undefined"
+                >
                   <b-row>
                     <b-col>
                       <h6 class="mb-0 text-left"><strong>Address</strong></h6>
                     </b-col>
                     <b-col>
-                      <a class="mb-0 text-left" href="#">{{txInputs[index][0].vout[txVin.vout].scriptPubKey.addresses[0]}}</a>
+                      <a class="mb-0 text-left"
+                      :href="'/address/' + txInputs[index].vout[txVin.vout].scriptPubKey.addresses[0]"
+                      v-if="txInputs[index].vout[txVin.vout].scriptPubKey.addresses !== undefined"
+                      >
+                      {{txInputs[index].vout[txVin.vout].scriptPubKey.addresses[0]}}
+                      </a>
+                      <b-button v-else>OP_RETURN</b-button>
                     </b-col>
                   </b-row>
                 </b-list-group-item>
@@ -91,7 +100,7 @@
                       <h6 class="mb-0 text-left"><strong>Value</strong></h6>
                     </b-col>
                     <b-col>
-                      <h6 class="mb-0 text-left">{{txInputs[index][0].vout[txVin.vout].value}}</h6>
+                      <h6 class="mb-0 text-left">{{txInputs[index].vout[txVin.vout].value}}</h6>
                     </b-col>
                   </b-row>
                 </b-list-group-item>
@@ -102,7 +111,7 @@
                       <h6 class="mb-0 text-left"><strong>scriptPubKey</strong></h6>
                     </b-col>
                     <b-col>
-                      <h6 class="mb-0 text-left">{{txInputs[index][0].vout[txVin.vout].scriptPubKey.asm}}</h6>
+                      <h6 class="mb-0 text-left">{{txInputs[index].vout[txVin.vout].scriptPubKey.asm}}</h6>
                     </b-col>
                   </b-row>
                 </b-list-group-item>
@@ -133,13 +142,22 @@
 
             <b-card-body v-else>
               <b-list-group flush>
-                <b-list-group-item href="#">
+                <b-list-group-item
+                :href="'/address/' + txVout.scriptPubKey.addresses[0]"
+                v-if="txVout.scriptPubKey.addresses !== undefined"
+                >
                   <b-row>
                     <b-col>
                       <h6 class="mb-0 text-left"><strong>Address</strong></h6>
                     </b-col>
                     <b-col>
-                      <a class="mb-0 text-left" href="#">{{txVout.scriptPubKey.addresses[0]}}</a>
+                      <a class="mb-0 text-left"
+                      :href="'/address/' + txVout.scriptPubKey.addresses[0]"
+                      v-if="txVout.scriptPubKey.addresses !== undefined"
+                      >
+                      {{txVout.scriptPubKey.addresses[0]}}
+                      </a>
+                      <b-button v-else>OP_RETURN</b-button>
                     </b-col>
                   </b-row>
                 </b-list-group-item>
